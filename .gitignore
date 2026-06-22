@@ -41,3 +41,6 @@ checksums*
 
 # Antora
 /documentation/node_modules/
+
+# Qodana
+results/

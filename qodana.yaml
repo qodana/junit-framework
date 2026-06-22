@@ -1,0 +1,43 @@
+version: "1.0"
+profile:
+  name: qodana.recommended
+  inspections:
+  - group: ALL
+    ignore:
+      - "MarkedForRemoval"
+projectJDK: 25
+bootstrap: |
+  cd /data/project
+  rm -f gradle/gradle-daemon-jvm.properties
+  echo "Configuring Gradle to use container JDK 25..."
+  export JAVA_HOME=/opt/idea/jbr
+  export PATH=$JAVA_HOME/bin:$PATH
+  export JDK25=/opt/idea/jbr
+  echo "Running tests to generate JaCoCo coverage..."
+  ./gradlew test jacocoRootReport --no-daemon -x platform-tests:test -x platform-tooling-support-tests:test
+  echo "Copying coverage reports to .qodana/code-coverage..."
+  mkdir -p .qodana/code-coverage
+  if [ -f build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml ]; then
+    cp build/reports/jacoco/jacocoRootReport/jacocoRootReport.xml .qodana/code-coverage/
+    echo "Coverage report copied successfully"
+  else
+    echo "ERROR: Coverage report not found"
+    exit 1
+  fi
+  ls -la .qodana/code-coverage/
+  echo "Bootstrap completed"
+
+coverage:
+  reportProblems: false
+
+include:
+  - name: All
+
+exclude:
+  - name: All
+    paths:
+      - "*/src/test/**"
+      - "*/src/testFixtures/**"
+      - jupiter-tests
+      - platform-tests
+      - platform-tooling-support-tests

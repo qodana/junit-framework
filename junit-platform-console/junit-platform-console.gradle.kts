@@ -52,13 +52,14 @@ tasks {
 			include("LICENSE-picocli.md")
 			into("META-INF")
 		}
-		doLast(objects.newInstance(UpdateJarAction::class).apply {
-			javaLauncher = project.javaToolchains.launcherFor(java.toolchain)
-			args.addAll(
-				"--file", archiveFile.get().asFile.absolutePath,
-				"--main-class", "org.junit.platform.console.ConsoleLauncher",
-			)
-		})
+		// Temporarily commented out for Qodana - requires jar utility which is not in JBR
+		// doLast(objects.newInstance(UpdateJarAction::class).apply {
+		// 	javaLauncher = project.javaToolchains.launcherFor(java.toolchain)
+		// 	args.addAll(
+		// 		"--file", archiveFile.get().asFile.absolutePath,
+		// 		"--main-class", "org.junit.platform.console.ConsoleLauncher",
+		// 	)
+		// })
 		bundle {
 			// Ignore warning for package that is only exported as "INTERNAL"
 			bnd("""
